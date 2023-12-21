@@ -8,6 +8,25 @@ font_13 = ("Crystal", 13, "bold")
 font_13_ = ("Crystal", 13)
 font_10 = ("Crystal", 10)
 
+def get_day_word(number):
+    if number % 10 == 1 and number % 100 != 11:
+        return "день"
+    elif 2 <= number % 10 <= 4 and (number % 100 < 10 or number % 100 >= 20):
+        return "дня"
+    else:
+        return "дней"
+    
+def get_rating(false_counter, true_counter, check):
+    if check == 0:
+        return('Начни лучше сегодня')
+    if false_counter > true_counter:
+        return('Капец ты черт :с')
+    elif false_counter == true_counter:
+        return('Еще один раз и я на тебя обижусь.')
+    else:
+        return('<3')
+    
+
 class DailySurveyApp:
     def set_root(self, root_, title_, param = 0.4):
         root_.title(title_)
@@ -26,7 +45,7 @@ class DailySurveyApp:
         return root_
 
     def __init__(self, root):
-        self.root = self.set_root(root, "The Way")
+        self.root = self.set_root(root, "The Way", 0.45)
 
         # Сегодняшняя дата
         self.today_date = datetime.now().date().strftime("%Y-%m-%d")
@@ -39,9 +58,14 @@ class DailySurveyApp:
         # Словарь для отслеживания денежных начислений в каждой линии
         self.money_data = {i: 0 for i in range(1, 18)}
 
-        # Открываем JSON-файл
-        with open("daily_data.json", "r") as json_file:
-            self.data = json.load(json_file)
+        try:
+            # Открываем JSON-файл
+            with open("daily_data.json", "r") as json_file:
+                self.data = json.load(json_file)
+        except FileNotFoundError:
+            None
+            # Если файл не найден, создаем пустой словарь
+            #self.first()
 
         # Проверяем, есть ли запись для сегодняшней даты
         if self.today_date in self.data and self.data[self.today_date] != None:
@@ -53,7 +77,52 @@ class DailySurveyApp:
             self.root.destroy()
             self.show_menu(None, None, label_text)
         else:
-            self.show_survey()
+            self.show_survey() 
+            """    def first(self):
+        "О. Привет. Мы знакомы? V●ᴥ●V"
+        "Да"
+            "Ээ... Окей. Я видимо кое-что потерял. Скорми-ка мне свой Путь."
+            #Две кнопки - Какой еще путь? Нет у меня никакого Пути.
+                "Ладно. Плохо."
+                "..."
+                "Тогда мы представим что мы не знакомы. Что значит не хочешь? Тебе придется. V-ᴥ-V"
+                "Я Вэй, люблю цифры и порядок. А тебя как зовут?\nV●ᴥ●V" #-> Пользователь вводит имя
+            # - Выбрать Путь.              
+        "Нет"
+            "Значит сейчас я нас насильно познакомлю.\n Я Вэй, люблю цифры и порядок. А тебя как зовут?\nV●ᴥ●V"
+        # Пользователь вводит имя
+        "Твои родители видимо не очень старались...\nV-ᴥ-V"
+        "Кхм, о чем это я?\nV●ᴥ●V"
+        "А, да. Точно. Давай приведем твою жизнь в порядок.\nV●ᴥ●V"
+        "Даже если ты не захочешь, тебе придется. Знаешь почему? Потому что я люблю насилие \nV●ᴥ●V"
+        "Ты начинаешь сегодня. И точка. Но ты можешь выбрать дату окончания твоего Пути. Вперед\nV●ᴥ●V"
+        # Выбор даты пользователем
+        # Записываем дату окончания.
+        # Если до окончания пути меньше 10 дней
+            "Что это еще такое?! V-ᴥ-V"
+            "Не, я так не играю. Выбери хотя бы 10 дней."# -> Выбор даты пользователем
+        # Подсчитываем лайны
+        # Сумма может быть некруглой, тогда последний Лайн становится короче. 
+        "Тааак. Смотри, я придумал правило. У тебя будет Путь."
+        "Это Путь к улучшению твоей жизни."
+        "Он состоит из Лайнов - отрезков из десяти дней (ну, почти всегда), в течение которых тебе придется платить мне деньги."
+        "Ну или не платить. Зависит от тебя."
+        "Если ты делаешь что-то, что тебя разрушает в один из дней - ты платишь мне определенную сумму. Сколько ты будешь мне платить?"
+        # Ввод суммы
+        # Меньше 50
+            "..."
+            "Не, нифига. Хотя бы 50 рублей закинь."
+        # Больше 500
+            "Это... Полегче. Ты еще не знаешь всех правил. При повторе твоей разрушительной привычки на следующий день..."
+            "Сумма за предыдущий день..."
+            "Удваивается :)"
+            "Не, если ты вывезешь заплатить мне за Лайн {calculate()}, то окей... Но лучше введи меньше пятисот рублей."
+                # - Вывезу
+                # - Cлишком много для меня
+                "Так я и знал, лошара :)"
+                "Ой." #-> Ввод суммы
+        "Окей. Погнали?"
+        # - Ага. """        
 
     # Штука для подсчета денег в лайне по его номеру
     def calculate_money_for_line(self, mode = 0, line_number = 0):
@@ -112,18 +181,24 @@ class DailySurveyApp:
         self.question_label.pack(anchor=tk.N, fill=tk.X, padx=20, pady=(20, 0))
 
         self.frame_menu = tk.Frame(self.root, bg="white")
-        self.frame_menu.pack(side=tk.TOP, fill=tk.BOTH, padx=20 ,pady=(0,0), expand=True)
+        self.frame_menu.pack(side=tk.TOP, fill=tk.BOTH, padx=20 ,pady=(20,0), expand=True)
 
         self.root.after(1, self.set_button_sizes)
+        
+        self.watch = tk.Button(self.frame_menu, text="Да я только посмотреть...", command=lambda: self.show_menu(None, None,"just_watch"), font=font_13_, bg="#ECECEC", height=4 , border=0)
+        self.watch.pack(side=tk.BOTTOM, fill=tk.X, pady=20, expand=True)
+        
 
     def set_button_sizes(self):
         self.frame_menu.update()
 
         self.stupid_button = tk.Button(self.frame_menu, text="Тупил...\n\n ┬┴┬┴┤(･_├┬┴┬┴", command=lambda: self.submit_survey("False"), font=font_13, bg="#FFCCE5", width=28, height=8, border=0)
-        self.stupid_button.pack(side=tk.RIGHT, padx=(10, 0))
+        self.stupid_button.pack(side=tk.RIGHT)
 
         self.not_stupid_button = tk.Button(self.frame_menu, text="Не тупил!\n\n (^˵◕ω◕˵^)", command=lambda: self.submit_survey("True"), font=font_13, bg="#CCFFCC", width=28, height=8 , border=0)
-        self.not_stupid_button.pack(side=tk.LEFT, padx=(0, 10))
+        self.not_stupid_button.pack(side=tk.LEFT)
+
+
 
     def submit_survey(self, answer):
         # Записываем ответ пользователя в JSON-файл
@@ -133,7 +208,7 @@ class DailySurveyApp:
         self.root.destroy()
         self.show_menu(None, None, self.data[self.today_date])
 
-    def show_menu(self, line_root = None, way_root = None, lable_text = None):
+    def show_menu(self, line_root = None, way_root = None, label_text = None):
 
         if line_root != None:
             line_root.destroy()
@@ -143,28 +218,40 @@ class DailySurveyApp:
         menu_root = tk.Tk()
         menu_root = self.set_root(menu_root, "The Way. Menu")
         
-        if lable_text != None:
-            if lable_text == 'False':
-                lable_text = "Ты должен отправить на счет {} рублей.".format(self.calculate_money_for_line(1,self.get_current_line()))
-            elif lable_text == 'True':
-                lable_text =  "Ты сегодня уже заполнял тупление.\nНа этот раз ты мне ничего не должен\nV●ᴥ●V"
-            money_label = tk.Label(menu_root, text=lable_text, font=font_15, bg="#ECECEC", height= 5)
+        if label_text != None:
+            if label_text == 'False':
+                label_text = "Ты должен отправить на счет {} рублей.".format(self.calculate_money_for_line(1,self.get_current_line()))
+            elif label_text == 'True':
+                label_text =  "Ты сегодня уже заполнял Путь.\nНа этот раз ты мне ничего не должен\nV●ᴥ●V"
+            elif label_text == "just_watch":
+                label_text = "Ну смотри, раз пришел.\n Но я этого не одобряю.\nV-ᴥ-V"
+            money_label = tk.Label(menu_root, text=label_text, font=font_15, bg="#ECECEC", height= 5)
             money_label.pack(anchor=tk.N, fill=tk.X, padx=20, pady=(20, 0))
 
-        menu_label = tk.Label(menu_root, text="Можешь глянуть всякое", font = font_13_, bg="white", height=2)
+        #if label_text != "just_watch":
+        menu_label = tk.Label(menu_root, text="Можешь глянуть всякое", font=font_13_, bg="white", height=2)
         menu_label.pack(pady=10)
 
         self.frame_main_menu = tk.Frame(menu_root, bg="white")
         self.frame_main_menu.pack(side=tk.TOP, fill=tk.BOTH, padx=20 ,pady=(0,20), expand=True)
-        self.root.after(1, self.set_main_button_sizes, menu_root, lable_text)
+        self.root.after(1, self.set_main_button_sizes, menu_root, label_text)
 
-    def set_main_button_sizes(self, menu_root, lable_text):
+        # Используйте frame_main_menu для установки размеров
+        self.frame_main_menu = tk.Frame(menu_root, bg="white")
+        self.frame_main_menu.pack(side=tk.TOP, fill=tk.BOTH, padx=20, pady=(0, 20), expand=True)
+        self.root.after(1, self.set_main_button_sizes, menu_root, label_text)
+
+        #if label_text == "just_watch":
+        #    self.stop_watch = tk.Button(self.frame_main_menu, text="Хочу отметить день", command=lambda: self.__init__(), font=font_13, bg="#CCFFCC", width=28, height=8, border=0)
+        #    self.stop_watch.pack(side=tk.BOTTOM, padx=(0, 10), pady=(20))
+            
+    def set_main_button_sizes(self, menu_root, label_text):
         self.frame_main_menu.update()
 
-        self.show_line_button = tk.Button(self.frame_main_menu, text="Line\n\n\n------------\n", command=lambda: self.show_line(menu_root, lable_text), font=font_13, bg="#E5CCFF", width=28, height=8, border=0)
+        self.show_line_button = tk.Button(self.frame_main_menu, text="Line\n\n\n------------\n", command=lambda: self.show_line(menu_root, label_text), font=font_13, bg="#E5CCFF", width=28, height=8, border=0)
         self.show_line_button.pack(side=tk.RIGHT, padx=(10, 0))
 
-        self.show_way_button = tk.Button(self.frame_main_menu, text="Way\n\n------------\n------------\n------------", command=lambda: self.show_way(menu_root, lable_text), font=font_13, bg="#E5CCFF", width=28, height=8 , border=0)
+        self.show_way_button = tk.Button(self.frame_main_menu, text="Way\n\n------------\n------------\n------------", command=lambda: self.show_way(menu_root, label_text), font=font_13, bg="#E5CCFF", width=28, height=8 , border=0)
         self.show_way_button.pack(side=tk.LEFT, padx=(0, 10))
 
         menu_root.mainloop()
@@ -227,11 +314,11 @@ class DailySurveyApp:
                 else:
                     canvas.create_oval(x1,y1,x2,y2, fill=color, width=2, outline="#66FF66")
 
-        date_start_lable = tk.Label(line_root, text=f"Начало лайна \nᐅ{(self.line_start_dates[self.current_line - 1]).strftime('%d.%m.%Y')}ᐊ", font = font_13_, bg="white", height=2)
-        date_end_lable = tk.Label(line_root, text=f"Окончание лайна \nᐅ{(self.line_start_dates[self.current_line - 1] + timedelta(days=10)).strftime('%d.%m.%Y')}ᐊ", font = font_13_, bg="white", height=2)
+        date_start_label = tk.Label(line_root, text=f"Начало лайна \nᐅ{(self.line_start_dates[self.current_line - 1]).strftime('%d.%m.%Y')}ᐊ", font = font_13_, bg="white", height=2)
+        date_end_label = tk.Label(line_root, text=f"Окончание лайна \nᐅ{(self.line_start_dates[self.current_line - 1] + timedelta(days=10)).strftime('%d.%m.%Y')}ᐊ", font = font_13_, bg="white", height=2)
 
-        date_start_lable.pack(pady=(0, 20), side="left", padx=20)
-        date_end_lable.pack(pady=(0, 20), side="right", padx=20)
+        date_start_label.pack(pady=(0, 20), side="left", padx=20)
+        date_end_label.pack(pady=(0, 20), side="right", padx=20)
 
         # Добавляем кнопку для возврата
         return_button = tk.Button(line_root, text="Вернуться в меню", command=lambda: self.show_menu(line_root, None, label_text), font = font_13, bg="#E5CCFF", width=28, height=8, border=0)
@@ -307,46 +394,56 @@ class DailySurveyApp:
         false_counter = 0
         true_counter = 0
 
-        filled_counter = 0
-
         for value in self.data.values():
             if value == "False":
                 false_counter += 1
             elif value == "True":
                 true_counter += 1
 
-       
+        filled_counter = 0
+    
         for value in reversed(self.data.values()):
-            while value == "null":
-                filled_counter +=1
+            if value is None:
+                filled_counter += 1
+            elif value == "True" or value == "False":
                 break
-            if value == "True" or value == "False":
-                break
+
+        # К-во дней от сегодня до даты начала
+        check = (datetime.strptime(self.today_date,'%Y-%m-%d') - self.day_of_start).days + 1
 
         frame = tk.Frame(way_root, bg="white")
         frame.pack(side=tk.LEFT, anchor='w', fill=tk.Y, pady=(0,30), padx=(20,0), expand=True)
 
-        good_lable = tk.Label(frame, text=f"Хороших: \t{true_counter} дней", font=font_13_, bg="WHITE", height=2)
-        good_lable.pack(side=tk.TOP, anchor="w")
+        good_label = tk.Label(frame, text=f"Хороших: \t\t{true_counter} {get_day_word(true_counter)}", font=font_13_, bg="WHITE", height=2)
+        good_label.pack(side=tk.TOP, anchor="w")
 
-        bad_lable = tk.Label(frame, text=f"Плохих: \t{false_counter} дней", font=font_13_, bg="WHITE", height=2)
-        bad_lable.pack(side=tk.TOP, anchor="w")
+        bad_label = tk.Label(frame, text=f"Плохих: \t\t{false_counter} {get_day_word(false_counter)}", font=font_13_, bg="WHITE", height=2)
+        bad_label.pack(side=tk.TOP, anchor="w")
+
+        non_label = tk.Label(frame, text=f"Учет не велся: \t{check - (false_counter + true_counter) } {get_day_word(check - (false_counter + true_counter))}", font=font_13_, bg="WHITE", height=2)
+        non_label.pack(side=tk.TOP, anchor="w")
         
         frame = tk.Frame(way_root, bg="white")
         frame.pack(side=tk.LEFT, anchor='w', fill=tk.Y, pady=(0,30), padx=(20), expand=True)
 
 
-        good_lable = tk.Label(frame, text=f"Пройдено: \t\t{(datetime.strptime(self.today_date,'%Y-%m-%d') - self.day_of_start).days + 1} дней", font=font_13_, bg="WHITE", height=2)
-        good_lable.pack(side=tk.TOP, anchor="w")
+        good_label = tk.Label(frame, text=f"Пройдено: \t\t{check} {get_day_word(check)}", font=font_13_, bg="WHITE", height=2)
+        good_label.pack(side=tk.TOP, anchor="w")
 
-        bad_lable = tk.Label(frame, text=f"Осталось до конца пути: \t{filled_counter} дней", font=font_13_, bg="WHITE", height=2)
-        bad_lable.pack(side=tk.TOP, anchor="w")
+        bad_label = tk.Label(frame, text=f"Осталось до конца пути: \t{filled_counter} {get_day_word(filled_counter)}", font=font_13_, bg="WHITE", height=2)
+        bad_label.pack(side=tk.TOP, anchor="w")
+
+        non_label = tk.Label(frame, text=f"Вердикт: \t{get_rating(false_counter, true_counter, check)}", font=font_13_, bg="WHITE", height=2)
+        non_label.pack(side=tk.TOP, anchor="w")
+        
 
         # Добавляем кнопку для возврата
         return_button = tk.Button(way_root, text="Вернуться в меню", command=lambda: self.show_menu(way_root, None, label_text), font=font_13, bg="#E5CCFF", width=28, height=5, border=0)
         return_button.pack(side=tk.LEFT, anchor='center', padx=(20, 20), pady=(0, 20))
 
         way_root.mainloop()
+
+
 
 
 if __name__ == "__main__":
