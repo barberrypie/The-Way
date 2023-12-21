@@ -30,9 +30,11 @@ class DailySurveyApp:
 
         # Сегодняшняя дата
         self.today_date = datetime.now().date().strftime("%Y-%m-%d")
+        self.day_of_start = datetime(2023, 12, 14)
+        self.number_of_lines = 17
 
         # Список начальных дат для каждого лайна
-        self.line_start_dates = [datetime(2023, 12, 14) + timedelta(days=i*10) for i in range(17)]
+        self.line_start_dates = [self.day_of_start + timedelta(days=i*10) for i in range(self.number_of_lines)]
         
         # Словарь для отслеживания денежных начислений в каждой линии
         self.money_data = {i: 0 for i in range(1, 18)}
@@ -225,8 +227,8 @@ class DailySurveyApp:
                 else:
                     canvas.create_oval(x1,y1,x2,y2, fill=color, width=2, outline="#66FF66")
 
-        date_start_lable = tk.Label(line_root, text=f"Начало лайна \n⌦{(self.line_start_dates[self.current_line - 1]).strftime('%d.%m.%Y')}⌫", font = font_13_, bg="white", height=2)
-        date_end_lable = tk.Label(line_root, text=f"Окончание лайна \n⌦{(self.line_start_dates[self.current_line - 1] + timedelta(days=10)).strftime('%d.%m.%Y')}⌫", font = font_13_, bg="white", height=2)
+        date_start_lable = tk.Label(line_root, text=f"Начало лайна \nᐅ{(self.line_start_dates[self.current_line - 1]).strftime('%d.%m.%Y')}ᐊ", font = font_13_, bg="white", height=2)
+        date_end_lable = tk.Label(line_root, text=f"Окончание лайна \nᐅ{(self.line_start_dates[self.current_line - 1] + timedelta(days=10)).strftime('%d.%m.%Y')}ᐊ", font = font_13_, bg="white", height=2)
 
         date_start_lable.pack(pady=(0, 20), side="left", padx=20)
         date_end_lable.pack(pady=(0, 20), side="right", padx=20)
@@ -314,26 +316,31 @@ class DailySurveyApp:
                 true_counter += 1
 
        
-        while value in reversed(self.data.values()) == None:
-            filled_counter +=1
+        for value in reversed(self.data.values()):
+            while value == "null":
+                filled_counter +=1
+                break
+            if value == "True" or value == "False":
+                break
 
         frame = tk.Frame(way_root, bg="white")
-        frame.pack(side=tk.LEFT, anchor='w', fill=tk.Y, pady=(0,20), padx=(20), expand=True)
+        frame.pack(side=tk.LEFT, anchor='w', fill=tk.Y, pady=(0,30), padx=(20,0), expand=True)
 
-        good_lable = tk.Label(frame, text=f"Хороших дней: {true_counter}", font=font_13_, bg="WHITE", height=2)
-        good_lable.pack(side=tk.TOP, anchor="center")
+        good_lable = tk.Label(frame, text=f"Хороших: \t{true_counter} дней", font=font_13_, bg="WHITE", height=2)
+        good_lable.pack(side=tk.TOP, anchor="w")
 
-        bad_lable = tk.Label(frame, text=f"Плохих дней: {false_counter}", font=font_13_, bg="WHITE", height=2)
-        bad_lable.pack(side=tk.TOP, anchor="center")
+        bad_lable = tk.Label(frame, text=f"Плохих: \t{false_counter} дней", font=font_13_, bg="WHITE", height=2)
+        bad_lable.pack(side=tk.TOP, anchor="w")
         
-        frame = tk.Frame(way_root, bg="red")
-        frame.pack(side=tk.LEFT, anchor='w', fill=tk.Y, pady=(0,20), padx=(20), expand=True)
+        frame = tk.Frame(way_root, bg="white")
+        frame.pack(side=tk.LEFT, anchor='w', fill=tk.Y, pady=(0,30), padx=(20), expand=True)
 
-        good_lable = tk.Label(frame, text=f"Осталось до конца пути: {filled_counter}", font=font_13_, bg="WHITE", height=2)
-        good_lable.pack(side=tk.TOP, anchor="center")
 
-        bad_lable = tk.Label(frame, text=f"Плохих дней: {false_counter}", font=font_13_, bg="WHITE", height=2)
-        bad_lable.pack(side=tk.TOP, anchor="center")
+        good_lable = tk.Label(frame, text=f"Пройдено: \t\t{(datetime.strptime(self.today_date,'%Y-%m-%d') - self.day_of_start).days + 1} дней", font=font_13_, bg="WHITE", height=2)
+        good_lable.pack(side=tk.TOP, anchor="w")
+
+        bad_lable = tk.Label(frame, text=f"Осталось до конца пути: \t{filled_counter} дней", font=font_13_, bg="WHITE", height=2)
+        bad_lable.pack(side=tk.TOP, anchor="w")
 
         # Добавляем кнопку для возврата
         return_button = tk.Button(way_root, text="Вернуться в меню", command=lambda: self.show_menu(way_root, None, label_text), font=font_13, bg="#E5CCFF", width=28, height=5, border=0)
