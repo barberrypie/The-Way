@@ -300,15 +300,44 @@ class DailySurveyApp:
             offset_y += 15  # Увеличиваем смещение по оси y для следующей "линии"
             line_number+=1
 
-            
-        good_lable = tk.Label(way_root, text=f"Хороших дней: {money_for_way}",font = font_13_, bg="WHITE", height=2)
-        good_lable.pack(side =tk.TOP, anchor='w', padx=(20,0), pady=(0,20))
-        bad_lable = tk.Label(way_root, text=f"Плохих дней: {money_for_way}",font = font_13_, bg="WHITE", height=2)
-        bad_lable.pack(side =tk.TOP, anchor='w',padx=(20,0), pady=(0,20))
+        
+        
+        false_counter = 0
+        true_counter = 0
 
-         # Добавляем кнопку для возврата
-        return_button = tk.Button(way_root, text="Вернуться в меню", command=lambda: self.show_menu(way_root, None, label_text), font = font_13, bg="#E5CCFF", width=28, height=5, border=0)
-        return_button.pack(side=tk.TOP, anchor='center', padx=(0, 20), pady=(0,20))
+        filled_counter = 0
+
+        for value in self.data.values():
+            if value == "False":
+                false_counter += 1
+            elif value == "True":
+                true_counter += 1
+
+       
+        while value in reversed(self.data.values()) == None:
+            filled_counter +=1
+
+        frame = tk.Frame(way_root, bg="white")
+        frame.pack(side=tk.LEFT, anchor='w', fill=tk.Y, pady=(0,20), padx=(20), expand=True)
+
+        good_lable = tk.Label(frame, text=f"Хороших дней: {true_counter}", font=font_13_, bg="WHITE", height=2)
+        good_lable.pack(side=tk.TOP, anchor="center")
+
+        bad_lable = tk.Label(frame, text=f"Плохих дней: {false_counter}", font=font_13_, bg="WHITE", height=2)
+        bad_lable.pack(side=tk.TOP, anchor="center")
+        
+        frame = tk.Frame(way_root, bg="red")
+        frame.pack(side=tk.LEFT, anchor='w', fill=tk.Y, pady=(0,20), padx=(20), expand=True)
+
+        good_lable = tk.Label(frame, text=f"Осталось до конца пути: {filled_counter}", font=font_13_, bg="WHITE", height=2)
+        good_lable.pack(side=tk.TOP, anchor="center")
+
+        bad_lable = tk.Label(frame, text=f"Плохих дней: {false_counter}", font=font_13_, bg="WHITE", height=2)
+        bad_lable.pack(side=tk.TOP, anchor="center")
+
+        # Добавляем кнопку для возврата
+        return_button = tk.Button(way_root, text="Вернуться в меню", command=lambda: self.show_menu(way_root, None, label_text), font=font_13, bg="#E5CCFF", width=28, height=5, border=0)
+        return_button.pack(side=tk.LEFT, anchor='center', padx=(20, 20), pady=(0, 20))
 
         way_root.mainloop()
 
