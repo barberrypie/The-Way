@@ -195,7 +195,7 @@ class DailySurveyApp:
         self.stupid_button = tk.Button(self.frame_menu, text="Тупил...\n\n ┬┴┬┴┤(･_├┬┴┬┴", command=lambda: self.submit_survey("False"), font=font_13, bg="#FFCCE5", width=28, height=8, border=0)
         self.stupid_button.pack(side=tk.RIGHT)
 
-        self.not_stupid_button = tk.Button(self.frame_menu, text="Не тупил!\n\n (^˵◕ω◕˵^)", command=lambda: self.submit_survey("True"), font=font_13, bg="#CCFFCC", width=28, height=8 , border=0)
+        self.not_stupid_button = tk.Button(self.frame_menu, text="Не тупил!\n\n (˵◕ω◕˵)", command=lambda: self.submit_survey("True"), font=font_13, bg="#CCFFCC", width=28, height=8 , border=0)
         self.not_stupid_button.pack(side=tk.LEFT)
 
 
@@ -229,8 +229,8 @@ class DailySurveyApp:
             money_label.pack(anchor=tk.N, fill=tk.X, padx=20, pady=(20, 0))
 
         #if label_text != "just_watch":
-        menu_label = tk.Label(menu_root, text="Можешь глянуть всякое", font=font_13_, bg="white", height=2)
-        menu_label.pack(pady=10)
+        menu_label = tk.Label(menu_root, text="У меня есть для тебя вот это", font=font_13_, bg="white", height=2)
+        menu_label.pack(pady=(20,0))
 
         self.frame_main_menu = tk.Frame(menu_root, bg="white")
         self.frame_main_menu.pack(side=tk.TOP, fill=tk.BOTH, padx=20 ,pady=(0,20), expand=True)
