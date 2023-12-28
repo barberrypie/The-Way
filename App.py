@@ -1,6 +1,8 @@
 import tkinter as tk
 import json
 from datetime import datetime, timedelta
+import statements
+import random
 
 font_18 = ("Crystal", 18, "bold")
 font_15 = ("Crystal", 15)
@@ -16,15 +18,20 @@ def get_day_word(number):
     else:
         return "дней"
     
+def choose_random_value(list):
+    if not list:
+        return None
+    return random.choice(list)
+    
 def get_rating(false_counter, true_counter, check):
     if check == 0:
-        return('Начни лучше сегодня')
+        return 'Начни лучше сегодня'
     if false_counter > true_counter:
-        return('Капец ты черт :с')
+        return choose_random_value(statements.negative_strings)
     elif false_counter == true_counter:
-        return('Еще один раз и я на тебя обижусь.')
+        return 'Еще один раз и я на тебя обижусь.'
     else:
-        return('<3')
+        return '<3'
     
 
 class DailySurveyApp:
